@@ -1,0 +1,36 @@
+#this gets appended to the /usr/syno/synosdk/texts/enu file
+[90000000]
+#ddns
+90000001 = "DDNS: Successfully updated IP address for [@1] from [@2] to [@3]."
+90000002 = "DDNS: IP out of date.  IP address for [@1] should be [@2] currently [@3]"
+90000003 = "DDNS: Problem updating IP address for [@1] from [@3] to [@2] using url [@4]"
+90000004 = "DDNS: IP address already correct for [@1]:[@2] no update necessary."
+
+#sync
+90010001 = "SYNC: Unknown Option [@1]."
+90010002 = "SYNC: Could not find sync directory [@1]."
+90010003 = "SYNC: --force is enabled, lockfile [@1] will be removed."
+90010004 = "SYNC: Could not remoe lockfile. Please check permissions on [@1]."
+90010005 = "SYNC: Sync is currently running.  Please remove [@1] or run with --force if this is a mistake."
+90010006 = "SYNC: Could not find identity file [@1] please check path and permissions."
+90010007 = "SYNC: Log directory [@1] does not exist and could not be created."
+90010008 = "SYNC: Sync started @ [@1]."
+90010009 = "SYNC: Moving old log files."
+90010010 = "SYNC: Deleting really old log files."
+90010011 = "SYNC: Syncing [@1]."
+90010012 = "SYNC: Source Directory [@1] does not exist."
+90010013 = "SYNC: Sucessfully finished syncing [@1]."
+90010014 = "SYNC: Error syncing [@1]."
+90010015 = "SYNC: Sync Finished @ [@1]."
+90010016 = "SYNC: Determining IP Address for VPN connected user [@1]."
+90010017 = "SYNC: User [@1] is currently disconnected."
+90010018 = "SYNC: User [@1] is connected via IP Address [@2] from [@3]."
+
+#vpnip
+90020001 = "VPNIP: User is already set to [@1]."
+90020002 = "VPNIP: Finding VPN Connection info for User [@1] Explicit User? [@2] Report Time? [@3] Report Source IP? [@4]."
+90020003 = "VPNIP: User [@1] is Disconnected."
+90020004 = "VPNIP: User [@1] is connected at IP [@2]."
+90020005 = "VPNIP: User [@1] connected at [@2]."
+90020006 = "VPNIP: User [@1] connected from [@2]."
+
