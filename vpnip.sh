@@ -45,15 +45,21 @@ done
 
 synologset1 sys info 0x90020002 $USER $USER_SET $TIME $SRC_IP 
 sleep 1s
+#note time in table is based on the linux epoch of 12/31/1969 at 1600 Pacific Time 
+#this represents 8 hours before 1/1/1970 at midnight 
 #echo "Finding VPN Connection infor for user [$USER] Explicit User? [$USER_SET] Report Time? [$TIME] Report Source IP? [$SRC_IP]"
 
    LAST_CONNECT=`sqlite3 /usr/syno/etc/packages/VPNCenter/synovpnlog.db "select id from synovpn_log_tb where user='$USER' AND event like 'Connected%' order by id desc limit 1;"`
+    NUM_CONNECT=`sqlite3 /usr/syno/etc/packages/VPNCenter/synovpnlog.db "select count(*) from synovpn_log_tb where user='$USER' AND event like 'Connected%';"`
 LAST_DISCONNECT=`sqlite3 /usr/syno/etc/packages/VPNCenter/synovpnlog.db "select id from synovpn_log_tb where user='$USER' AND event like 'Disconnected%' order by id desc limit 1;"`
+ NUM_DISCONNECT=`sqlite3 /usr/syno/etc/packages/VPNCenter/synovpnlog.db "select count(*) from synovpn_log_tb where user='$USER' AND event like 'Disconnected%';"`
 #| sed s/.*as// | sed s/.$// |  tr -d ' []'`
 #echo "CONNECT=$LAST_CONNECT"
+#echo "NUM_CONNECT=$NUM_CONNECT"
 #echo "DISCONNECT=$LAST_DISCONNECT"
+#echo "NUM_DISCONNECT=$NUM_DISCONNECT"
 
-if [[ $LAST_DISCONNECT > $LAST_CONNECT ]]; then
+if [[ $NUM_DISCONNECT > $NUM_CONNECT && $LAST_DISCONNECT > $LAST_CONNECT ]]; then
 	synologset1 sys info 0x90020003 $USER 
 	echo "Disconnected"
 else
