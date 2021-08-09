@@ -10,11 +10,17 @@ function echoit()
         synologset1 $1 $2 $3 $4 $5 $6 $7 $8 $9
     fi
 }
+
+keyfile=gd-keys.json
+if [[ ! -f $keyfile ]]; then
+    echoit sys err 0x90000008 "$keyfile"
+    exit 1
+fi
     
-mydomain=$(jq -r ".domain" gd-keys.json)
-myhostname=$(jq -r ".hostname" gd-keys.json)
-key=$(jq -r ".key" gd-keys.json)
-secret=$(jq -r ".secret" gd-keys.json)
+mydomain=$(jq -r ".domain" $keyfile)
+myhostname=$(jq -r ".hostname" $keyfile)
+key=$(jq -r ".key" $keyfile)
+secret=$(jq -r ".secret" $keyfile)
 gdapikey="$key:$secret"
 
 myip=`curl -s "https://api.ipify.org"`

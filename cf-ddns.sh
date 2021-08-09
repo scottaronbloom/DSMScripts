@@ -11,13 +11,19 @@ function echoit()
     fi
 }
 
-proxy=$(jq -r ".proxy" cf-keys.json)
-mydomain=$(jq -r ".domain" cf-keys.json)
-myhostname=$(jq -r ".hostname" cf-keys.json)
-usernameID=$(jq -r ".usernameID" cf-keys.json)
-accountID=$(jq -r ".accountID" cf-keys.json)
-apiKEY=$(jq -r ".apiKEY" cf-keys.json)
-tokenID=$(jq -r ".tokenID" cf-keys.json)
+keyfile=cf-keys.json
+if [[ ! -f $keyfile ]]; then
+    echoit sys err 0x90000008 "$keyfile"
+    exit 1
+fi
+
+proxy=$(jq -r ".proxy" $keyfile)
+mydomain=$(jq -r ".domain" $keyfile)
+myhostname=$(jq -r ".hostname" $keyfile)
+usernameID=$(jq -r ".usernameID" $keyfile)
+accountID=$(jq -r ".accountID" $keyfile)
+apiKEY=$(jq -r ".apiKEY" $keyfile)
+tokenID=$(jq -r ".tokenID" $keyfile)
 
 myip=`curl -s "https://api.ipify.org"`
 
@@ -28,26 +34,22 @@ dnsData=$(curl -s -X GET "$listDNSAPI" -H "Authorization: Bearer $tokenID" -H "C
 resSuccess=$(echo "$dnsData" | jq -r ".success")
 if [[ $resSuccess != "true" ]]; then
 	echoit sys err 0x90000007 "Unknown error" "$dnsData"
-    echo "badauth"
     exit 1
 fi
 
 cfID=$(echo "$dnsData" | jq -r ".result[0].id")
 cfIP=$(echo "$dnsData" | jq -r ".result[0].content")
 
-echo "IP address on CloudFlare is currently set to $cfIP with record ID=$cfID"
+#echo "IP address on CloudFlare is currently set to $cfIP with record ID=$cfID"
 
 if [ "$cfIP" != "$myip" -a "$myip" != "" ]; then
 	echoit sys info 0x90000002 $myhostname.$mydomain $myip $cfIP
-	echo "IP is out of date!!"
 
     if [[ $cfID = "null" ]]; then
-        echo "DNS Record for $myhostname.$mydomain does not exist, creating"
         cmd=POST
         api="https://api.cloudflare.com/client/v4/zones/${usernameID}/dns_records"
         echoit sys err 0x90000005 $myhostname.$mydomain
     else
-        echo "Updating IP address for $myhostname.$mydomain to $myip from $cfIP"
         cmd=PUT
         api="https://api.cloudflare.com/client/v4/zones/${usernameID}/dns_records/${cfID}"
         echoit sys err 0x90000006 $myhostname.$mydomain

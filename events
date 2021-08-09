@@ -8,6 +8,7 @@
 90000005 = "DDNS: Record for [@1] does not exist, creating"
 90000006 = "DDNS: Updating record for [@1]"
 90000007 = "DDNS: [@1]-[@2]"
+90000008 = "DDNS: Could not file key file: [@1]"
 
 #sync
 90010001 = "SYNC: Unknown Option [@1]."
