@@ -2,13 +2,22 @@
 
 #from https://www.instructables.com/Quick-and-Dirty-Dynamic-DNS-Using-GoDaddy
 
-proxy=true
-mydomain="towel42.com"
-myhostname="beachbox"
-usernameID=""
-accountID=""
-apiKEY=""
-tokenID=""
+function echoit() 
+{
+    if [[ ! -f /usr/syno/bin/synologset1 ]]; then
+        echo $1 $2 $3 $4 $5 $6 $7 $8 $9
+    else
+        synologset1 $1 $2 $3 $4 $5 $6 $7 $8 $9
+    fi
+}
+
+proxy=$(jq -r ".proxy" cf-keys.json)
+mydomain=$(jq -r ".domain" cf-keys.json)
+myhostname=$(jq -r ".hostname" cf-keys.json)
+usernameID=$(jq -r ".usernameID" cf-keys.json)
+accountID=$(jq -r ".accountID" cf-keys.json)
+apiKEY=$(jq -r ".apiKEY" cf-keys.json)
+tokenID=$(jq -r ".tokenID" cf-keys.json)
 
 myip=`curl -s "https://api.ipify.org"`
 
@@ -18,6 +27,7 @@ dnsData=$(curl -s -X GET "$listDNSAPI" -H "Authorization: Bearer $tokenID" -H "C
 
 resSuccess=$(echo "$dnsData" | jq -r ".success")
 if [[ $resSuccess != "true" ]]; then
+	echoit sys err 0x90000007 "Unknown error" "$dnsData"
     echo "badauth"
     exit 1
 fi
@@ -28,35 +38,30 @@ cfIP=$(echo "$dnsData" | jq -r ".result[0].content")
 echo "IP address on CloudFlare is currently set to $cfIP with record ID=$cfID"
 
 if [ "$cfIP" != "$myip" -a "$myip" != "" ]; then
-#	synologset1 sys info 0x90000002 $myhostname.$mydomain $myip $cfIP
+	echoit sys info 0x90000002 $myhostname.$mydomain $myip $cfIP
 	echo "IP is out of date!!"
 
     if [[ $cfID = "null" ]]; then
         echo "DNS Record for $myhostname.$mydomain does not exist, creating"
         cmd=POST
         api="https://api.cloudflare.com/client/v4/zones/${usernameID}/dns_records"
+        echoit sys err 0x90000005 $myhostname.$mydomain
     else
         echo "Updating IP address for $myhostname.$mydomain to $myip from $cfIP"
         cmd=PUT
         api="https://api.cloudflare.com/client/v4/zones/${usernameID}/dns_records/${cfID}"
+        echoit sys err 0x90000006 $myhostname.$mydomain
     fi
     res=$(curl -s -X $cmd "$api" -H "Authorization: Bearer $tokenID" -H "Content-Type:application/json" --data "{\"type\":\"A\",\"name\":\"${myhostname}.${mydomain}\",\"content\":\"$myip\",\"proxied\":$proxy}")
     resSuccess=$(echo "$res" | jq -r ".success")
     if [[ $resSuccess != "true" ]]; then
-#       synologset1 sys err 0x90000003 $myhostname.$mydomain $myip $cfIP
-        echo "badauth"
+        echoit sys err 0x90000003 $myhostname.$mydomain $myip $cfIP
         exit 1
     else
-#       synologset1 sys info 0x90000001 $myhostname.$mydomain $myip $cfIP
-        echo "good"
+        echoit sys info 0x90000001 $myhostname.$mydomain $myip $cfIP
         exit 0
     fi
-
-#	if [[ "$?" != "0" ]]; then
-#	else
-#	fi
 else
-#	synologset1 sys info 0x90000004 $myhostname.$mydomain $myip 
-   echo "IP already correct, no update necessary"
+   #echoit sys info 0x90000004 $myhostname.$mydomain $myip 
    exit 0
 fi

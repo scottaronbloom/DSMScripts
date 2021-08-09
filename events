@@ -1,10 +1,13 @@
-#this gets appended to the /usr/syno/synosdk/texts/enu file
+#this gets appended to the /usr/syno/synosdk/texts/enu/events file
 [90000000]
 #ddns
 90000001 = "DDNS: Successfully updated IP address for [@1] from [@2] to [@3]."
 90000002 = "DDNS: IP out of date.  IP address for [@1] should be [@2] currently [@3]"
 90000003 = "DDNS: Problem updating IP address for [@1] from [@3] to [@2] using url [@4]"
 90000004 = "DDNS: IP address already correct for [@1]:[@2] no update necessary."
+90000005 = "DDNS: Record for [@1] does not exist, creating"
+90000006 = "DDNS: Updating record for [@1]"
+90000007 = "DDNS: [@1]-[@2]"
 
 #sync
 90010001 = "SYNC: Unknown Option [@1]."
