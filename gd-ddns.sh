@@ -11,7 +11,8 @@ function echoit()
     fi
 }
 
-keyfile=gd-keys.json
+dir=`dirname $0`
+keyfile=$dir/gd-keys.json
 if [[ ! -f $keyfile ]]; then
     echoit sys err 0x90000008 "$keyfile"
     exit 1
